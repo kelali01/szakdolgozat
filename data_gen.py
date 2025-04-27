@@ -45,7 +45,8 @@ def simulate_private_equity_cashflows(
         dist_cashflows = np.random.uniform(0.2, 0.8, size=size_d)
 
         # Initialize cashflows
-        cashflow_series = np.zeros(quarters_per_fund)
+        # cashflow_series = np.zeros(quarters_per_fund)   # itt kéne lehet változtatni, hogy ne 60 legyen, hanem a dist_end
+        cashflow_series = np.zeros(dist_end)  
         cashflow_series[contrib_periods] = contrib_cashflows
         cashflow_series[dist_quarters] = dist_cashflows
 
@@ -71,10 +72,12 @@ def simulate_private_equity_cashflows(
             'Strategy': fund['Strategy'],
             'Geography': fund['Geography'],
             'FundQuality': fund['FundQuality'],
-            'Quarter': quarters,
+            'Quarter': quarters[:dist_end],
             'Cashflow': cashflow_series
         })
-        cf_df['date'] = pd.date_range(start=str(fund['VintageYear'])+'-01-01', end=str(fund['VintageYear']+14)+'-12-31', freq='QE')
+        # cf_df['date'] = pd.date_range(start=str(fund['VintageYear'])+'-01-01', end=str(fund['VintageYear']+14)+'-12-31', freq='QE')
+        cf_df['date'] = pd.date_range(start=str(fund['VintageYear'])+'-01-01', periods=dist_end, freq='QE')
+
         cashflow_dfs.append(cf_df)
 
     # 3. Merge everything into one big tidy DataFrame

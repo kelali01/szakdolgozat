@@ -89,3 +89,10 @@ def direct_alpha(df):
     alpha_cf = np.array(df['scaled_cashflow'])
     
     return xirr(df['date'], alpha_cf)
+
+def moic(df):
+    
+    contributions = df[df['Cashflow'] < 0]['Cashflow'].sum() 
+    distributions = df[df['Cashflow'] > 0]['Cashflow'].sum() 
+    
+    return (distributions) / (-contributions)
