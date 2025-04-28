@@ -45,26 +45,45 @@ def simulate_private_equity_cashflows(
         dist_cashflows = np.random.uniform(0.2, 0.8, size=size_d)
 
         # Initialize cashflows
-        # cashflow_series = np.zeros(quarters_per_fund)   # itt kéne lehet változtatni, hogy ne 60 legyen, hanem a dist_end
+        # cashflow_series = np.zeros(dist_end)  
+        # cashflow_series[contrib_periods] = contrib_cashflows
+        # cashflow_series[dist_quarters] = dist_cashflows
+
+        # Apply adjustments based on fund characteristics
+        # if fund['Strategy'] == 'Venture':
+        #     cashflow_series *= 1.3
+        # if fund['Geography'] == 'North America':
+        #     cashflow_series *= 1.15
+        # else:
+        #     cashflow_series *= 0.8
+        # if fund['VintageYear'] % 2 == 1:
+        #     cashflow_series *= 1.2
+        # else:
+        #     cashflow_series *= 0.9
+        # if fund['FundQuality'] == 'Good':
+        #     cashflow_series *= 1.4
+        # else:
+        #     cashflow_series *= 0.75
+
+        if fund['Strategy'] == 'Venture':
+            dist_cashflows *= 1.3
+        if fund['Geography'] == 'North America':
+            dist_cashflows *= 1.25
+        else:
+            dist_cashflows *= 0.8
+        if fund['VintageYear'] % 2 == 1:
+            dist_cashflows *= 1.2
+        else:
+            dist_cashflows *= 0.9
+        if fund['FundQuality'] == 'Good':
+            dist_cashflows *= 1.4
+        else:
+            dist_cashflows *= 0.75
+
         cashflow_series = np.zeros(dist_end)  
         cashflow_series[contrib_periods] = contrib_cashflows
         cashflow_series[dist_quarters] = dist_cashflows
-
-        # Apply adjustments based on fund characteristics
-        if fund['Strategy'] == 'Venture':
-            cashflow_series *= 1.3
-        if fund['Geography'] == 'North America':
-            cashflow_series *= 1.15
-        else:
-            cashflow_series *= 0.8
-        if fund['VintageYear'] % 2 == 1:
-            cashflow_series *= 1.2
-        else:
-            cashflow_series *= 0.9
-        if fund['FundQuality'] == 'Good':
-            cashflow_series *= 1.4
-        else:
-            cashflow_series *= 0.75
+        
 
         cf_df = pd.DataFrame({
             'FundID': fund['FundID'],
