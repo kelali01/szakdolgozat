@@ -5,6 +5,8 @@ import yfinance as yf
 from scipy.optimize import newton
 from datetime import datetime
 from scipy.optimize import brentq
+import pyxirr
+import math
 
 def sp500_data():
 
@@ -50,21 +52,27 @@ def index_weighted_cashflows(cashflows, index):
 
 #bretq method for xirr
 # Brent's method is more robust than Newton's method for finding roots, especially when the function is not well-behaved or has multiple roots.
-def xirr(dates, cashflows):
-    def f(r):
-        return sum([cf / (1 + r)**((d - dates[0]).days / 365.25) for cf, d in zip(cashflows, dates)])
+# def xirr(dates, cashflows):
+#     def f(r):
+#         return sum([cf / (1 + r)**((d - dates[0]).days / 365.25) for cf, d in zip(cashflows, dates)])
     
+#     try:
+#         return brentq(f, -0.99, 10)  # Safe wide bracket
+#     except ValueError:
+#         return np.nan
+
+def xirr(dates, cashflows):
     try:
-        return brentq(f, -0.99, 10)  # Safe wide bracket
-    except ValueError:
+        irr = pyxirr.xirr(dict(zip(dates, cashflows)))
+        return irr
+    except Exception:
         return np.nan
 
 def ln_pme(df):
-    #nav todo
     nav_pme = -1 * (df['scaled_cashflow'].sum())
-    ln_cf = np.array(df['Cashflow'])
+    ln_cf = np.array(df['Cashflow'], dtype=float)
     ln_cf[-1] += nav_pme
-
+    
     return xirr(df['date'], ln_cf)
 
 def  ks_pme(df):
@@ -87,8 +95,8 @@ def pme_plus(df):
 def direct_alpha(df):
     #nav todo
     alpha_cf = np.array(df['scaled_cashflow'])
-    
-    return xirr(df['date'], alpha_cf)
+    a = xirr(df['date'], alpha_cf)
+    return math.log(1 + a)
 
 def moic(df):
     
