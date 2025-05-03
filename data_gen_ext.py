@@ -49,7 +49,7 @@ def simulate_private_equity_cashflows_ext(
         elif fund['Strategy'] == 'Growth':
             dist_cashflows *= 1.3
         else:  # Buyout
-            dist_cashflows *= 1.1
+            dist_cashflows *= 0.9
         if fund['Geography'] == 'North America':
             dist_cashflows *= 1.25
         elif fund['Geography'] == 'Europe':
